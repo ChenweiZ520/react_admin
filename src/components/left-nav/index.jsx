@@ -17,26 +17,31 @@ export default class LeftNav extends Component {
   返回包含n个<Item>和<SubMenu>的数组
   */
 
-  getMenuNodes2 = (list)=>{
-    return menuList.reduce((pre,item)=>{
+  getMenuNodes = (list)=>{
+    return list.reduce((pre,item)=>{
       if (!item.children) {
-        return (
-          pre.push((
-            <Item key={item.key}>
-              <Link to={item.key}>
-                <Icon type={item.icon} />
-                <span>{item.title}</span>
-              </Link>
-            </Item>
-          ))
-        )
+        pre.push((
+          <Item key={item.key}>
+            <Link to={item.key}>
+              <Icon type={item.icon} />
+              <span>{item.title}</span>
+            </Link>
+          </Item>
+        ))
+      }else{
+        pre.push((
+          <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>}>
+            {
+              this.getMenuNodes(item.children)
+            }
+          </SubMenu>
+        ))
       }
-
       return pre
     },[])
   }
 
-  getMenuNodes = ()=>{
+  getMenuNodes_map = ()=>{
     return menuList.map(item => {
       if (!item.children) {
         return (
@@ -81,7 +86,7 @@ export default class LeftNav extends Component {
           defaultOpenKeys={['sub1']}
         >
           {
-            this.getMenuNodes()
+            this.getMenuNodes(menuList)
           }
         </Menu>
       </div>
