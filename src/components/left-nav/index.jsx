@@ -4,7 +4,7 @@
 
 import React, {Component} from 'react'
 import {Menu, Icon} from 'antd'
-import {Link} from 'react-router-dom'
+import {Link,withRouter} from 'react-router-dom'
 import './index.less'
 import menuList from '../../config/menuconfig'
 import url from '../../assets/images/logo.png'
@@ -12,7 +12,7 @@ import url from '../../assets/images/logo.png'
 const SubMenu = Menu.SubMenu
 const Item = Menu.Item
 
-export default class LeftNav extends Component {
+class LeftNav extends Component {
   /*
   返回包含n个<Item>和<SubMenu>的数组
   */
@@ -29,6 +29,14 @@ export default class LeftNav extends Component {
           </Item>
         ))
       }else{
+        const path = this.props.location.pathname
+        const cItem = item.children.find(cItem => cItem.key === path)
+        if (cItem){
+          const openKey = item.key
+          this.openKey = openKey
+        }
+
+        //item有children递归调用
         pre.push((
           <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>}>
             {
@@ -72,7 +80,20 @@ export default class LeftNav extends Component {
     })
   }
 
+  /*
+  在第一次render()前调用一次
+  componentWillMount: 在第一次render()前调用一次, 为第一次render()准备数据(同步)
+  componentDidMount: 在第一次render()之后调用一次, 启动异步任务, 后面异步更新状态重新render
+  */
+  componentWillMount() {
+    this.menuNodes = this.getMenuNodes(menuList)
+  }
+
   render() {
+    const menuNodes = this.menuNodes
+    const selectKey = this.props.location.pathname
+    const openKey = this.openKey
+
     return (
       <div className='left-nav'>
         <Link className='logo' to='/home'>
@@ -82,14 +103,16 @@ export default class LeftNav extends Component {
         <Menu
           mode="inline"
           theme="dark"
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['sub1']}
+          selectedKeys={[selectKey]}
+          defaultOpenKeys={[openKey]}
         >
           {
-            this.getMenuNodes(menuList)
+            menuNodes
           }
         </Menu>
       </div>
     )
   }
 }
+
+export default withRouter(LeftNav)
