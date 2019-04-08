@@ -9,7 +9,7 @@ import App from './App'
 
 //将localStorage存储的user保存到内存中
 const user = storageUtil.getUser()
-//console.log(user._id)
+//console.log('index---',user)
 if (user._id){
   MemoryUtils.user = user
 }

@@ -14,7 +14,7 @@ export default {
   },
   getUser(){
     //return JSON.parse(localStorage.getItem(USER_KEY) || '{}')
-    return store.get(USER_KEY)
+    return store.get(USER_KEY) || {}
 
   },
   removeUser(){

@@ -1,11 +1,20 @@
 import React, {Component} from 'react'
-import {Redirect} from 'react-router-dom'
-import {Row,Col} from 'antd'
+import {Redirect,Switch,Route} from 'react-router-dom'
+import {Layout} from 'antd'
 import MemoryUtils from '../../util/MemoryUtils'
 import LeftNav from '../../components/left-nav'
 import Header from '../../components/header'
 import Footer from '../../components/footer'
-import './index.less'
+import Home from '../home/home'
+import Category from '../category/category'
+import Product from '../product/product'
+import Role from '../role/role'
+import User from '../user/user'
+import Line from '../charts/line'
+import Bar from '../charts/bar'
+import Pie from '../charts/pie'
+
+const {Sider, Content} = Layout
 
 export default class Admin extends Component {
 
@@ -16,16 +25,28 @@ export default class Admin extends Component {
     }
 
     return (
-      <Row className='container'>
-        <Col span={4}>
+      <Layout>
+        <Sider>
           <LeftNav/>
-        </Col>
-        <Col span={20} className='main'>
-          <Header/>
-          <div className='content'>主体内容区</div>
-          <Footer/>
-        </Col>
-      </Row>
+        </Sider>
+        <Layout>
+          <Header>Header</Header>
+          <Content style={{background:'white'}}>
+            <Switch>
+              <Route path='/home' component={Home}/>
+              <Route path='/category' component={Category}/>
+              <Route path='/product' component={Product}/>
+              <Route path='/user' component={User}/>
+              <Route path='/role' component={Role}/>
+              <Route path="/charts/bar" component={Bar}/>
+              <Route path="/charts/pie" component={Pie}/>
+              <Route path="/charts/line" component={Line}/>
+              <Redirect to='/home'/>
+            </Switch>
+          </Content>
+          <Footer>Footer</Footer>
+        </Layout>
+      </Layout>
     )
   }
 }

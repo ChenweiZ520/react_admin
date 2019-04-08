@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
 import './login.less'
-import logo from './images/logo.png'
+import logo from '../../assets/images/logo.png'
 import LoginForm from './login-form'
 import {reqLogin} from '../../api/index'
 import storageUtil from '../../util/storageUtil'
@@ -18,6 +18,7 @@ export default class Login extends Component {
     if (result.status === 0){
       const user = result.data
       //保存到locall storage中
+      //console.log('login()',user)
       storageUtil.saveUser(user)
       //保存到内存中
       MemoryUtils.user = user
