@@ -37,7 +37,7 @@ class Header extends Component {
   }
   //异步获取天气
   getWeather = async ()=>{
-    const {dayPictureUrl, weather} = await getWeather('北京')
+    const {dayPictureUrl, weather} = await getWeather('天津')
     this.setState({
       dayPictureUrl,
       weather
