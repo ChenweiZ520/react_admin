@@ -26,3 +26,18 @@ export const getWeather = (city)=>{
     })
   })
 }
+
+// 获取分类列表
+export const reqCategories = (parentId='0') => ajax('/manage/category/list', {parentId})
+
+// 添加分类
+export const reqAddCategory = (categoryName, parentId) => ajax('/manage/category/add', {categoryName, parentId}, 'POST')
+
+// 更新分类
+export const reqUpdateCategory = ({categoryId, categoryName}) => ajax('/manage/category/update', {categoryId, categoryName}, 'POST')
+
+// 根据分类ID获取分类
+export const reqCategory = (categoryId) => ajax('/manage/category/info', {categoryId})
+
+
+
