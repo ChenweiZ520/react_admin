@@ -10,6 +10,8 @@ import {
 
 import {reqCategories,reqAddCategory,reqUpdateCategory} from '../../api/index'
 import LinkButton from '../../components/link-button/index'
+import UpdateForm from './update-form'
+import AddForm from './add-form'
 
 
 /*
@@ -24,12 +26,13 @@ export default class Category extends Component {
     loading:false
   }
 
-  //异步获取分类列表
-  getCategories = async ()=>{
+  //根据parentId异步获取分类列表
+  getCategories = async (parentId)=>{
     this.setState({
       loading:true
     })
-    const {parentId} = this.state
+    //若指定parentId就是用，没指定使用状态中的parentId
+    parentId = parentId || this.state.parentId
     const result = await reqCategories(parentId)
     this.setState({
       loading:false
@@ -69,21 +72,56 @@ export default class Category extends Component {
       showStatus:0   //0:不显示 1：显示添加 2：显示修改
     })
   }
-  //添加分类
-  addCategory = ()=>{
-
-  }
-  //修改分类
-  updataCategory = ()=>{
-
-  }
   //显示添加对话框
   showAdd = ()=>{
     this.setState({showStatus:1})
   }
   //显示修改对话框
-  showUpdata = (category)=>{
+  showUpdate = (category)=>{
+    this.category = category
     this.setState({showStatus:2})
+  }
+
+  //添加分类
+  addCategory = async ()=>{
+    //获取数据
+    const {categoryName,parentId} = this.form.getFieldsValue()
+    //对话框消失
+    this.setState({
+      showStatus:0
+    })
+    //重置表单
+    this.form.resetFields()
+    //异步请求添加分类
+    const result = await reqAddCategory(categoryName,parentId)
+    if (result.status===0) {
+      //在当前分类下添加
+      if (parentId==='0' || parentId===this.state.parentId) {
+        this.getCategories(parentId)
+      }
+    }
+
+  }
+
+  //修改分类
+  updateCategory = async ()=>{
+    //获取数据
+    //console.log(this.form)
+    const categoryId = this.category._id
+    const {categoryName} = this.form.getFieldsValue()
+
+    //对话框消失
+    this.setState({
+      showStatus:0
+    })
+    //重置表单
+    this.form.resetFields()
+
+    //异步请求更新分类
+    const result = await reqUpdateCategory({categoryId,categoryName})
+    if (result.status===0){
+      this.getCategories()
+    }
   }
 
   componentDidMount() {
@@ -98,7 +136,7 @@ export default class Category extends Component {
       width:300,
       render:(category)=>(
         <span>
-          <LinkButton onClick={()=>this.showUpdata(category)}>修改分类</LinkButton>
+          <LinkButton onClick={()=>this.showUpdate(category)}>修改分类</LinkButton>
           {
             this.state.parentId==='0'?<LinkButton onClick={()=>this.showSubcategories(category)}>查看子分类</LinkButton>:null
           }
@@ -110,6 +148,7 @@ export default class Category extends Component {
   render() {
 
     const {categories,subCategories,parentId,parentName,loading,showStatus} = this.state
+    const category = this.category || {}
 
     const title = parentId==='0'?'一级分类列表':(
       <span>
@@ -141,17 +180,23 @@ export default class Category extends Component {
           title="添加分类"
           visible={showStatus===1}
           onOk={this.addCategory}
-          onCancel={()=>this.setState({showStatus:0})}
+          onCancel={()=>{
+            this.setState({showStatus:0})
+            this.form.resetFields()
+          }}
         >
-          <p>添加分类</p>
+          <AddForm categories={categories} parentId={parentId} setForm={form => this.form=form}/>
         </Modal>
         <Modal
           title="修改分类"
           visible={showStatus===2}
-          onOk={this.updataCategory}
-          onCancel={()=>this.setState({showStatus:0})}
+          onOk={this.updateCategory}
+          onCancel={()=>{
+            this.setState({showStatus:0})
+            this.form.resetFields()
+          }}
         >
-          <p>修改分类</p>
+          <UpdateForm categoryName={category.name} setForm={form => this.form=form}/>
         </Modal>
       </Card>
     )
