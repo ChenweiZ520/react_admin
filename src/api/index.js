@@ -18,7 +18,7 @@ export const getWeather = (city)=>{
     const url = `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
     jsonp(url,{},(err,data)=>{
       if (!err && data.status==='success') {
-        const {dayPictureUrl, weather} = data.results[0].weather_data[0]
+        const {dayPictureUrl, weather} = data.results[0].weather_data[1]
         resolve({dayPictureUrl, weather})
       }else {
         alert('获取天气数据失败')
@@ -39,5 +39,21 @@ export const reqUpdateCategory = ({categoryId, categoryName}) => ajax('/manage/c
 // 根据分类ID获取分类
 export const reqCategory = (categoryId) => ajax('/manage/category/info', {categoryId})
 
+//获取商品分页列表
+export const reqProducts = (pageNum,pageSize) => ajax('/manage/product/list',{pageNum,pageSize})
+
+/*
+搜索产品分页列表
+pageSize: 每页的条目数
+pageNum: 当前请求第几页 (从1开始)
+searchType: productDesc / productName
+searchName: 搜索的关键字
+ */
+export const reqSearchProducts = ({pageSize, pageNum, searchType, searchName})=>ajax('/manage/product/search',{
+  pageSize,pageNum,[searchType]:searchName
+})
+
+//更新商品的状态（上架/下架）
+export const reqUpdateProductStatus = ({productId,status})=>ajax('/manage/product/updateStatus',{productId,status},'POST')
 
 
