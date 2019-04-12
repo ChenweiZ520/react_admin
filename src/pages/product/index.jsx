@@ -131,7 +131,7 @@ export default class ProductIndex extends Component {
       </span>
     )
     const extra = (
-      <Button type='primary'>
+      <Button type='primary' onClick={()=>this.props.history.push('/product/addupdate')}>
         <Icon type='plus'/>
         添加商品
       </Button>
